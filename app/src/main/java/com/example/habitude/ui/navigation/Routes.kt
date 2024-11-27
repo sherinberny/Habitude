@@ -12,5 +12,7 @@ object Routes {
     val home = Screen("home")
     val dos = Screen("dos")
     val donts = Screen("donts")
-    val habitModification = Screen(route="habitmodification?id={id}")
+    val notifications = Screen("notifications")
+    val profile = Screen("profile")
+    val habitModification = Screen(route = "habitmodification?id={id}")
 }

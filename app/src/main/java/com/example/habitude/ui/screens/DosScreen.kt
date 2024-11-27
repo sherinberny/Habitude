@@ -1,6 +1,8 @@
 package com.example.habitude.ui.screens
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,19 +15,31 @@ import com.example.habitude.ui.components.HabitListItem
 import com.example.habitude.ui.viewmodels.HabitsViewModel
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DosScreen(navHostController: NavHostController) {
-    val viewModel: HabitsViewModel = viewModel()
-    val state = viewModel.uiState
+fun DosScreen(navHostController: NavHostController, habitsViewModel: HabitsViewModel = viewModel()) {
+    val state = habitsViewModel.uiState
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(true) { viewModel.getHabits(false) }
-    LazyColumn(modifier = Modifier.fillMaxHeight().padding(4.dp)) {
-        items(state.habits, key = { "do_${it.id}" }) { habit -> // Add unique "do_" prefix
+    // Fetch habits when the screen is launched
+    LaunchedEffect(Unit) {
+        scope.launch { habitsViewModel.getHabits(doordont = false) }
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(4.dp)
+    ) {
+        items(state.habits, key = { habit -> "do_${habit.id}" }) { habit ->
             HabitListItem(
                 habit = habit,
-                toggle = { scope.launch { habit.id?.let { id -> viewModel.toggleHabitCompletion(id) } } },
-                onEditPressed = { navHostController.navigate("habitmodification?id=${habit.id}") }
+                toggle = {
+                    scope.launch { habit.id?.let { id -> habitsViewModel.toggleHabitCompletion(id) } }
+                },
+                onEditPressed = {
+                    navHostController.navigate("habitmodification?id=${habit.id}")
+                }
             )
         }
     }

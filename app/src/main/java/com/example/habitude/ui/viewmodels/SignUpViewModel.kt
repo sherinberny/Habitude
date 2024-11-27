@@ -18,6 +18,12 @@ class SignUpScreenState {
     var passwordError by mutableStateOf(false)
     var passwordConfirmationError by mutableStateOf(false)
     var errorMessage by mutableStateOf("")
+
+    var name by mutableStateOf("")
+    var age by mutableStateOf("")
+    var gender by mutableStateOf("")
+    var height by mutableStateOf("")
+    var weight by mutableStateOf("")
 }
 
 class SignUpViewModel(application: Application): AndroidViewModel(application) {
@@ -30,6 +36,8 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         uiState.passwordError = false
         uiState.passwordConfirmationError = false
         uiState.errorMessage = ""
+
+        // Validate the existing fields
         if (!uiState.email.contains("@")) {
             uiState.emailError = true
             uiState.errorMessage = "Email is invalid."
@@ -37,8 +45,6 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         }
         if (uiState.email != uiState.emailConfirmation) {
             uiState.emailConfirmationError = true
-            println(uiState.email == uiState.emailConfirmation)
-            println(uiState.emailConfirmation)
             uiState.errorMessage = "Email confirmation does not match."
             return
         }
@@ -54,9 +60,36 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
             uiState.errorMessage = "Passwords do not match."
             return
         }
+
+        // Validate the new fields
+        if (uiState.name.isEmpty()) {
+            uiState.errorMessage = "Name is required."
+            return
+        }
+
+        if (uiState.age.isEmpty()) {
+            uiState.errorMessage = "Age is required."
+            return
+        }
+
+        if (uiState.gender.isEmpty()) {
+            uiState.errorMessage = "Gender is required."
+            return
+        }
+
+        if (uiState.height.isEmpty()) {
+            uiState.errorMessage = "Height is required."
+            return
+        }
+
+        if (uiState.weight.isEmpty()) {
+            uiState.errorMessage = "Weight is required."
+            return
+        }
+
         try {
-            UserRepository.createUser(uiState.email, uiState.password)
-        } catch (e:SignUpException) {
+            UserRepository.createUser(uiState.email, uiState.password, uiState.name, uiState.age, uiState.gender, uiState.height, uiState.weight)
+        } catch (e: SignUpException) {
             uiState.errorMessage = e.message ?: "Something went wrong. Please try again."
         }
     }

@@ -21,16 +21,20 @@ fun SignUpScreen(navHostController: NavHostController) {
     val viewModel: SignUpViewModel = viewModel()
     val scope = rememberCoroutineScope()
     val state = viewModel.uiState
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.SpaceAround) {
+        verticalArrangement = Arrangement.SpaceAround
+    ) {
         Surface(shadowElevation = 2.dp) {
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)) {
                 Text(text = "Create Account", style = MaterialTheme.typography.headlineSmall)
+
+                // Existing fields...
                 FormField(
                     value = state.email,
                     onValueChange = { state.email = it },
@@ -57,10 +61,39 @@ fun SignUpScreen(navHostController: NavHostController) {
                     error = state.passwordConfirmationError,
                     password = true
                 )
-                Row (
+
+                // New fields
+                FormField(
+                    value = state.name,
+                    onValueChange = { state.name = it },
+                    placeholder = { Text("Name") }
+                )
+                FormField(
+                    value = state.age,
+                    onValueChange = { state.age = it },
+                    placeholder = { Text("Age") }
+                )
+                FormField(
+                    value = state.gender,
+                    onValueChange = { state.gender = it },
+                    placeholder = { Text("Gender") }
+                )
+                FormField(
+                    value = state.height,
+                    onValueChange = { state.height = it },
+                    placeholder = { Text("Height") }
+                )
+                FormField(
+                    value = state.weight,
+                    onValueChange = { state.weight = it },
+                    placeholder = { Text("Weight") }
+                )
+
+                // Buttons
+                Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth()
-                ){
+                ) {
                     TextButton(onClick = { navHostController.popBackStack() }) {
                         Text(text = "Cancel")
                     }
@@ -81,7 +114,8 @@ fun SignUpScreen(navHostController: NavHostController) {
                     ) {
                         Text(text = "Create Account")
                     }
-            }
+                }
+
                 Text(
                     text = state.errorMessage,
                     style = TextStyle(color = MaterialTheme.colorScheme.error),

@@ -4,15 +4,21 @@ import android.app.Application
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.habitude.ui.models.Habit
 import com.example.habitude.ui.models.Habit_Tracker
 import com.example.habitude.ui.models.Habits
 import com.example.habitude.ui.repositories.HabitRepository
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
+import androidx.compose.runtime.State
 import java.time.format.DateTimeFormatter
 
 class HabitsScreenState {
@@ -24,6 +30,21 @@ class HabitsScreenState {
   val habitsAll: List<Habits>
   get() = _habitsAll
 }
+
+class HabitViewModel : ViewModel() {
+  // Use mutableStateOf for observing the habit list state in Composables
+  private val _habits = mutableStateOf<List<Habit>>(emptyList())
+  val habits: State<List<Habit>> = _habits // Expose this as immutable state to Composables
+
+  // Function to refresh habits data
+  fun refreshHabits() {
+    viewModelScope.launch {
+      val freshHabits = HabitRepository.getHabits()
+      _habits.value = freshHabits
+    }
+  }
+}
+
 
 class HabitsViewModel(application: Application) : AndroidViewModel(application) {
   val uiState = HabitsScreenState()

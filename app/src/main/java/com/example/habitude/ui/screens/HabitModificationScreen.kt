@@ -41,6 +41,94 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HabitModificationScreen(navHostController: NavHostController, id: String?) {
+    val viewModel: HabitModificationViewModel = viewModel()
+    val scope = rememberCoroutineScope()
+    val state = viewModel.uiState
+
+    LaunchedEffect(true) { viewModel.setUpInitialState(id) }
+    LaunchedEffect(state.saveSuccess) {
+        if (state.saveSuccess) {
+            navHostController.navigate("home")
+        }
+    }
+    Column(modifier = Modifier.fillMaxHeight().padding(vertical = 100.dp)) {
+        Surface(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp),
+            shadowElevation = 4.dp,
+            color = Color.White
+        ) {
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(
+                    text = "Create Habit",
+                    style = MaterialTheme.typography.headlineMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                )
+                OutlinedTextField(
+                    value = state.title,
+                    onValueChange = { state.title = it },
+                    placeholder = { Text(text = "Title") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
+
+                OutlinedTextField(
+                    value = state.daily_duration,
+                    onValueChange = { state.daily_duration = it },
+                    placeholder = { Text(text = "Duration") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                )
+
+                OutlinedTextField(
+                    value = state.frequency,
+                    onValueChange = { state.frequency = it },
+                    placeholder = { Text(text = "Frequency (in min)") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                )
+
+                OutlinedTextField(
+                    value = state.start_date,
+                    onValueChange = { state.start_date = it },
+                    placeholder = { Text(text = "Start Date") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "Avoid this habit:")
+                    Checkbox(checked = state.avoid, onCheckedChange = { state.avoid = it })
+                }
+
+                Spacer(modifier = Modifier.padding(6.dp))
+                Divider()
+                Spacer(modifier = Modifier.padding(6.dp))
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+                    Button(onClick = { navHostController.popBackStack() }) { Text(text = "Cancel") }
+                    Spacer(modifier = Modifier.padding(30.dp))
+                    Button(onClick = { scope.launch { viewModel.saveHabit() } }, elevation = null) {
+                        Text(text = "Save Habit")
+                    }
+                }
+
+                Text(
+                    text = state.errorMessage,
+                    style = TextStyle(color = MaterialTheme.colorScheme.error),
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Right
+                )
+            }
+        }
+    }
+}
+
+/*
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HabitModificationScreen(navHostController: NavHostController, id: String?) {
   val viewModel: HabitModificationViewModel = viewModel()
   val scope = rememberCoroutineScope()
   val state = viewModel.uiState
@@ -130,3 +218,4 @@ fun HabitModificationScreen(navHostController: NavHostController, id: String?) {
         }
   }
 }
+*/
