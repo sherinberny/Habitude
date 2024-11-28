@@ -23,12 +23,15 @@ import java.time.format.DateTimeFormatter
 
 class HabitsScreenState {
   val _habits = mutableStateListOf<Habit>()
-  val _habitsAll = mutableStateListOf<Habits>()
+  val _habitsDo = mutableStateListOf<Habits>()
+  val _habitsDont = mutableStateListOf<Habits>()
   val _habit_tracker = mutableStateListOf<Habit_Tracker>()
   val habits: List<Habit>
     get() = _habits
-  val habitsAll: List<Habits>
-  get() = _habitsAll
+  val habitsDo: List<Habits>
+  get() = _habitsDo
+  val habitsDont: List<Habits>
+    get() = _habitsDont
 }
 
 class HabitViewModel : ViewModel() {
@@ -49,24 +52,37 @@ class HabitViewModel : ViewModel() {
 class HabitsViewModel(application: Application) : AndroidViewModel(application) {
   val uiState = HabitsScreenState()
 
+  @RequiresApi(Build.VERSION_CODES.O)
   suspend fun getHabits(doordont: Boolean){
     val habits = HabitRepository.getHabits(doordont)
     uiState._habits.clear()
     uiState._habits.addAll(habits)
-  }
-
-  suspend fun getHabits(){
-    val habits = HabitRepository.getHabits()
-    uiState._habits.clear()
-    uiState._habits.addAll(habits)
+    // val habits = HabitRepository.getHabitsBasedOnDoDonts(doordont)
+  /*  uiState._habitsAll.clear()
+    uiState._habitsAll.addAll(habits)*/
   }
 
   @RequiresApi(Build.VERSION_CODES.O)
+  suspend fun getHabitsFromDo(){
+    val habits = HabitRepository.getHabitsFromDo()
+    uiState._habitsDo.clear()
+    uiState._habitsDo.addAll(habits)
+  }
+
+  @RequiresApi(Build.VERSION_CODES.O)
+  suspend fun getHabitsFromDont(){
+    val habits = HabitRepository.getHabitsFromDont()
+    uiState._habitsDont.clear()
+    uiState._habitsDont.addAll(habits)
+  }
+
+
+/*  @RequiresApi(Build.VERSION_CODES.O)
   suspend fun getHabitsFromBoth() {
     val habits = HabitRepository.getHabitsFromBoth()
     uiState._habitsAll.clear()
     uiState._habitsAll.addAll(habits)
-  }
+  }*/
 
   @RequiresApi(Build.VERSION_CODES.O)
   suspend fun toggleHabitCompletion(habitid: String){
@@ -79,8 +95,8 @@ class HabitsViewModel(application: Application) : AndroidViewModel(application) 
 
     try {
       // Query to check for an entry with the specified date and habit_id
-    //  val formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-      val formattedDate = LocalDate.now()
+      val formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+    //  val formattedDate = LocalDate.now()
       val querySnapshot = habitTrackerCollection
         .whereEqualTo("date", formattedDate)
         .whereEqualTo("habitid", habitid)

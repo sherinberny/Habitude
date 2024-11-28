@@ -10,6 +10,7 @@ data class Habits(
     val completed: Boolean? = null,
     val avoid: Boolean? = null,
     var skippedDates: List<String> = emptyList(), // Calculated skipped dates
+    var trackedDates: List<String> = emptyList(), // Calculated skipped dates
     var totalTracked: Int = 0 // Calculated tracked count
 )
 {}

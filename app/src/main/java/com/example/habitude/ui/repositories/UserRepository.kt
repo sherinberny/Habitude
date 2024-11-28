@@ -18,6 +18,7 @@ object UserRepository {
 
         val userData = mapOf(
             "name" to name,
+            "email" to email,
             "age" to age,
             "gender" to gender,
             "height" to height,

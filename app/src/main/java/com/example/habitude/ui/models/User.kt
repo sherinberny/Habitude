@@ -10,5 +10,6 @@ data class User(
     val age: String = "",
     val gender: String = "",
     val height: String = "",
-    val weight: String = ""
+    val weight: String = "",
+    val email: String = "",
 )

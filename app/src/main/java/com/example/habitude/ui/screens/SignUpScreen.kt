@@ -32,35 +32,10 @@ fun SignUpScreen(navHostController: NavHostController) {
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)) {
-                Text(text = "Create Account", style = MaterialTheme.typography.headlineSmall)
+                Text(text = "Create Account", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(bottom = 16.dp))
 
                 // Existing fields...
-                FormField(
-                    value = state.email,
-                    onValueChange = { state.email = it },
-                    placeholder = { Text("Email") },
-                    error = state.emailError
-                )
-                FormField(
-                    value = state.emailConfirmation,
-                    onValueChange = { state.emailConfirmation = it},
-                    placeholder = { Text("Email Confirmation") },
-                    error = state.emailConfirmationError
-                )
-                FormField(
-                    value = state.password,
-                    onValueChange = { state.password = it },
-                    placeholder = { Text("Password") },
-                    error = state.passwordError,
-                    password = true
-                )
-                FormField(
-                    value = state.passwordConfirmation,
-                    onValueChange = { state.passwordConfirmation = it },
-                    placeholder = { Text("Password Confirmation") },
-                    error = state.passwordConfirmationError,
-                    password = true
-                )
+
 
                 // New fields
                 FormField(
@@ -87,6 +62,33 @@ fun SignUpScreen(navHostController: NavHostController) {
                     value = state.weight,
                     onValueChange = { state.weight = it },
                     placeholder = { Text("Weight") }
+                )
+
+                FormField(
+                    value = state.email,
+                    onValueChange = { state.email = it },
+                    placeholder = { Text("Email") },
+                    error = state.emailError
+                )
+                FormField(
+                    value = state.emailConfirmation,
+                    onValueChange = { state.emailConfirmation = it},
+                    placeholder = { Text("Email Confirmation") },
+                    error = state.emailConfirmationError
+                )
+                FormField(
+                    value = state.password,
+                    onValueChange = { state.password = it },
+                    placeholder = { Text("Password") },
+                    error = state.passwordError,
+                    password = true
+                )
+                FormField(
+                    value = state.passwordConfirmation,
+                    onValueChange = { state.passwordConfirmation = it },
+                    placeholder = { Text("Password Confirmation") },
+                    error = state.passwordConfirmationError,
+                    password = true
                 )
 
                 // Buttons
