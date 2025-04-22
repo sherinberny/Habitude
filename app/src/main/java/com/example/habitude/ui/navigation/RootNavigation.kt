@@ -1,5 +1,7 @@
 package com.example.habitude.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -18,6 +20,7 @@ import androidx.navigation.navArgument
 import com.example.habitude.ui.repositories.UserRepository
 import com.example.habitude.ui.screens.*
 import kotlinx.coroutines.launch
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RootNavigation() {

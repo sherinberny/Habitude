@@ -11,6 +11,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.Date
 
 object HabitRepository {
@@ -18,11 +19,15 @@ object HabitRepository {
   val habitCache = mutableListOf<Habit>()
   val habitCacheFromBoth = mutableListOf<Habits>()
   val donthabitCache = mutableListOf<Habit>()
+  val donthabitsCache = mutableListOf<Habits>()
   val dohabitCache = mutableListOf<Habit>()
+  val dohabitsCache = mutableListOf<Habits>()
   val habitTrackerCache = mutableListOf<Habit_Tracker>()
   private var docacheInitialized = false
   private var dontcacheInitialized = false
   private var cacheInitialized = false
+
+
   suspend fun createHabit(title: String, start_date: String, frequency: String, daily_duration: String, doIt: Boolean): Habit {
     val doc = Firebase.firestore.collection("habits").document()
     val habit =
@@ -85,6 +90,105 @@ object HabitRepository {
             cacheInitialized = true
         }
         return habitCache
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getHabitsFromDo(): List<Habits> {
+        dohabitsCache.clear()
+        val snapshot = Firebase.firestore
+            .collection("habits")
+            .whereEqualTo("userId", UserRepository.getCurrentUserId())
+            .whereEqualTo("avoid", false)
+            .get()
+            .await()
+
+        val habits = snapshot.toObjects<Habits>()
+        val habitTrackerCollection = Firebase.firestore.collection("habit_tracker")
+
+        for (habit in habits) {
+            val trackedSnapshot = habitTrackerCollection
+                .whereEqualTo("habitid", habit.id)
+                .get()
+                .await()
+            val trackedDates = trackedSnapshot.documents.mapNotNull { it.getString("date") }
+
+            // Calculate expected dates
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val startDate = LocalDate.parse(habit.start_date, formatter)
+            //   val expectedDates = (0 until (habit.frequency?.toInt() ?: 0)).map { startDate.plusDays(it.toLong()).toString() }
+
+            // Calculate the end date using duration (assuming `habit.duration` is in days)
+            val endDate = startDate.plusDays(habit.daily_duration?.toLong() ?: 0L)
+
+            // Get today's date
+            val today = LocalDate.now()
+
+            // Only calculate expected dates up to today if the end date is in the future
+            val expectedDates = if (endDate.isAfter(today)) {
+                // Only include dates up to today
+                (0 until (habit.daily_duration?.toInt() ?: 0))
+                    .map { startDate.plusDays(it.toLong()).toString() }
+                    .filter { LocalDate.parse(it, formatter).isBefore(today.plusDays(1)) }
+            } else {
+                // Include all expected dates up to the end date
+                (0 until (habit.daily_duration?.toInt() ?: 0))
+                    .map { startDate.plusDays(it.toLong()).toString() }
+            }
+
+
+            // Calculate skipped dates and total tracked
+            habit.skippedDates = expectedDates.filter { it !in trackedDates }
+            habit.totalTracked = trackedDates.size
+            habit.trackedDates = trackedDates
+        }
+
+        dohabitsCache.addAll(habits)
+
+        return dohabitsCache
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getHabitsFromDont(): List<Habits> {
+        donthabitsCache.clear()
+        val snapshot = Firebase.firestore
+            .collection("habits")
+            .whereEqualTo("userId", UserRepository.getCurrentUserId())
+            .whereEqualTo("avoid", true)
+            .get()
+            .await()
+
+        val habits = snapshot.toObjects<Habits>()
+        val habitTrackerCollection = Firebase.firestore.collection("habit_tracker")
+
+        for (habit in habits) {
+            val trackedSnapshot = habitTrackerCollection
+                .whereEqualTo("habitid", habit.id)
+                .get()
+                .await()
+            val trackedDates = trackedSnapshot.documents.mapNotNull { it.getString("date") }
+// Get today's date
+            val today = LocalDate.now()
+            // Calculate expected dates
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            val startDate = LocalDate.parse(habit.start_date, formatter)
+
+            // Only calculate expected dates up to today if the end date is in the future
+            val expectedDates =
+                (0..ChronoUnit.DAYS.between(startDate, today))
+                    .map { startDate.plusDays(it.toLong()).format(formatter) }
+
+
+
+            // Calculate skipped dates and total tracked
+            habit.skippedDates = expectedDates.filter { it !in trackedDates }
+            habit.totalTracked = trackedDates.size
+            habit.trackedDates = trackedDates
+        }
+
+        donthabitsCache.addAll(habits)
+
+        return donthabitsCache
     }
 
 

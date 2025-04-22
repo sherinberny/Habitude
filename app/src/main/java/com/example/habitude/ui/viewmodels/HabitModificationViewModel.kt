@@ -44,7 +44,7 @@ class HabitModificationViewModel(application: Application) : AndroidViewModel(ap
       return
     }
 
-    if (id == null) {
+    if (id == "someId") {
       HabitRepository.createHabit(uiState.title, uiState.start_date, uiState.frequency, uiState.daily_duration, uiState.avoid)
     } else {
       val habit = HabitRepository.getHabits().find { it.id == id }

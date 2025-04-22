@@ -1,11 +1,18 @@
 package com.example.habitude.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.habitude.ui.navigation.Routes
@@ -14,40 +21,48 @@ import kotlinx.coroutines.*
 
 @Composable
 fun SplashScreen(navHostController: NavHostController) {
+    // Load the logo image resource from the drawable folder
+    val logo: Painter = painterResource(id = com.example.habitude.R.drawable.habitude_name)
 
+    // Start the effect when the SplashScreen is displayed
     LaunchedEffect(true) {
-        val loginStatusCheck = async {
-            // TODO: check to see if user is logged in
-        }
-        // wait for 3 seconds or until the login check is
-        // done before navigating
-        delay(1000)
-        loginStatusCheck.await()
+        // Simulate a loading state (like checking user authentication status)
+        delay(1000) // Wait for 1 second before performing the check
+
+        // Perform the login check
+        val isLoggedIn = UserRepository.getCurrentUserId() != null
+
+        // Navigate based on the user's authentication status
         navHostController.navigate(
-            if (UserRepository.getCurrentUserId() == null) Routes.launchNavigation.route else Routes.appNavigation.route) {
-            // makes it so that we can't get back to the
-            // splash screen by pushing the back button
+            if (isLoggedIn) Routes.appNavigation.route else Routes.launchNavigation.route
+        ) {
+            // Make sure to pop the splash screen off the back stack
             popUpTo(navHostController.graph.findStartDestination().id) {
                 inclusive = true
             }
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceAround
+    // UI layout of the splash screen with a background color and centered logo
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary) // Set the background color here
     ) {
-        Text(
-            text = "Habitude",
-            modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.headlineLarge,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = "SRS",
-            modifier = Modifier.fillMaxWidth(),
-            style = MaterialTheme.typography.headlineSmall,
-            textAlign = TextAlign.Center,
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Display the logo in the center
+            Image(
+                painter = logo,
+                contentDescription = "App Logo",
+                modifier = Modifier.size(200.dp) // Set the logo size
+            )
+
+        }
     }
 }

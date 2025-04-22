@@ -1,6 +1,8 @@
 package com.example.habitude.ui.screens
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,23 +11,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.habitude.ui.components.HabitListFromBoth
 import com.example.habitude.ui.components.HabitListItem
 import com.example.habitude.ui.viewmodels.HabitsViewModel
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DontsScreen(navHostController: NavHostController) {
-    val viewModel: HabitsViewModel = viewModel()
-    val state = viewModel.uiState
+
+fun DontsScreen(navHostController: NavHostController, habitsViewModel: HabitsViewModel = viewModel()) {
+    val state = habitsViewModel.uiState
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(true) { viewModel.getHabits(true) }
-    LazyColumn(modifier = Modifier.fillMaxHeight().padding(4.dp)) {
-        items(state.habits, key = { "dont_${it.id}" }) { habit -> // Add unique "dont_" prefix
-            HabitListItem(
+    // Fetch habits when the screen is launched
+    LaunchedEffect(Unit) {
+        scope.launch { habitsViewModel.getHabitsFromDont() }
+    }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(4.dp)
+    ) {
+        items(state.habitsDont, key = { habit -> "dont_${habit.id}" }) { habit ->
+            HabitListFromBoth(
                 habit = habit,
-                toggle = { scope.launch { habit.id?.let { id -> viewModel.toggleHabitCompletion(id) } } },
-                onEditPressed = { navHostController.navigate("habitmodification?id=${habit.id}") }
+                toggle = {
+                    scope.launch { habit.id?.let { id -> habitsViewModel.toggleHabitCompletion(id) } }
+                },
+                onEditPressed = {
+                    navHostController.navigate("habitmodification?id=${habit.id}")
+                }
             )
         }
     }
