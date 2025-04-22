@@ -1,37 +1,84 @@
-Habitude is a Jetpack Compose-based Android application featuring both Drawer Navigation and Bottom Navigation, allowing users to seamlessly navigate between different parts of the app.
+🌿 Habitude - Your Personal Habit Tracker
+  Habitude is an intuitive Android app designed to help users track their daily Do's and Don'ts — positive habits to build and negative habits to avoid. Built using Jetpack Compose, it features a sleek dual-navigation system that enhances usability and organization.
 
-✨ Features
-🔐 Login Flow: Authenticated users are directed to a dynamic home screen.
+🚀 Features
+    🔐 Login Flow – Secure user login landing on a smart dashboard.
+    
+    🧭 Dual Navigation Structure:
 
-🧭 Dual Navigation:
+Bottom Navigation:
 
-Bottom Navigation: Includes "Do's" and "Don'ts".
+    ✅ Do’s – Track good habits to build.
+    
+    🚫 Don’ts – Monitor habits you want to avoid.
 
-Drawer Navigation: Includes "Home", "Notifications", "Profile", and "Logout".
+Drawer Navigation:
 
-🎯 Smart Navigation Logic:
+    🏠 Home
+    
+    🔔 Notifications
+    
+    🙍 Profile
+    
+    🚪 Logout
 
-On login, user lands on the "Do's" screen with "Home" selected in the drawer.
+🎯 Navigation Logic:
 
-Switching between "Do's" and "Don'ts" keeps "Home" selected in the drawer.
+    After login, the user lands on the Do’s screen with Home selected in the drawer.
+    
+    Navigating between Do’s and Don’ts keeps the drawer on Home.
+    
+    Selecting Notifications or Profile switches to dedicated screens without bottom navigation.
 
-Navigating to "Notifications" or "Profile" hides the bottom navigation, focusing on drawer-based screens only.
+📅 Track Progress:
 
-⚙️ Built entirely with Jetpack Compose, State Management, and Navigation Components.
+  View tracked days, skipped days, and completion status.
 
-🚀 Getting Started
-Prerequisites
-Android Studio Flamingo or later
-
-Kotlin 1.9+
-
-Gradle 8+
-
-Jetpack Compose + Navigation libraries
-
-Clone the Repository
-
-git clone https://github.com/sherinberny/habitude.git
-cd habitude
+  ✍️ Edit Habits with ease.
 
 
+📁 Project Structure
+    📁 app
+     ┣ 📁 ui
+     ┃ ┣ MainActivity.kt
+     ┃ ┣ DrawerContent.kt
+     ┃ ┣ BottomNavigationBar.kt
+     ┃ ┣ screens/
+     ┃ ┃ ┣ HomeScreen.kt
+     ┃ ┃ ┣ DosScreen.kt
+     ┃ ┃ ┣ DontsScreen.kt
+     ┃ ┃ ┣ NotificationsScreen.kt
+     ┃ ┃ ┗ ProfileScreen.kt
+     ┣ 📁 models
+     ┃ ┗ Habit.kt, Habits.kt, Habit_Tracker.kt
+     ┣ 📁 navigation
+     ┃ ┗ Screen.kt (Sealed class for defining navigation routes)
+🛠️ Tech Stack
+    🧩 Jetpack Compose – Modern declarative UI toolkit.
+    
+    🚀 Navigation Component – Smooth in-app navigation.
+    
+    🏷️ Material3 – Sleek, modern UI components.
+
+📦 Getting Started
+    ✅ Prerequisites
+        Android Studio Flamingo or newer
+        
+        Kotlin 1.9+
+        
+        Jetpack Compose libraries
+        
+        Gradle 8+
+
+    🔧 Installation
+
+        git clone https://github.com/sherinberny/habitude.git
+        cd habitude
+        
+    Open the project in Android Studio, sync Gradle, and run it on an emulator or physical device.
+
+👩‍💻 Developed By
+Sherin
+📍 Vancouver, BC
+💡 Android & Full Stack Developer
+📫 https://www.linkedin.com/in/sherin-babu-2907/
